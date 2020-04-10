@@ -56,7 +56,7 @@ class VitXenditCallback(http.Controller):
         return simplejson.dumps(res)
         print(res)
 
-    @http.route('/xendit/fva/paid', auth='public')
+    @http.route('/xendit/fva/paid', method='POST', auth='public')
     def index(self, **kw):
         _logger = info(kw)
         va_number = kw.get('va_number')
