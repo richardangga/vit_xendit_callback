@@ -8,29 +8,29 @@ _logger = logging.getLogger(__name__)
 
 
 class VitXenditCallback(http.Controller):
-    @http.route('/xendit/invoice/paid', method='POST', auth='public')
+    @http.route('/xendit/invoice/paid', auth='public')
     def index(self, **kw):
         _logger.info(kw)
-        external = kw.get('external')
-        sale_order = request.env['sale.order'].search([('external','=',external)])
-        if not sale_order:
-            res = {'status':'FAILED', 'message':'SO not found'}
-            return simplejson.dumps(res)
-        journal_id = request.env['account.journal'].search([('name','=','Bank')])
-        payment_method= request.env['account.payment.method'].search([('code','=','electronic')])
-        payment = request.env['account.payment']
-        p = payment.create({
+        # external = kw.get('external')
+        # sale_order = request.env['sale.order'].search([('external','=',external)])
+        # if not sale_order:
+        #     res = {'status':'FAILED', 'message':'SO not found'}
+        #     return simplejson.dumps(res)
+        # journal_id = request.env['account.journal'].search([('name','=','Bank')])
+        # payment_method= request.env['account.payment.method'].search([('code','=','electronic')])
+        payment = request.env['account.payment'].search(['external','=','external_id'])
+        payment.create({
             'payment_type':'inbound',
             'partner_type':'customer',
-            'partner_id': sale_order.id,
-            'amount': sale_order.amount_total,
-            'journal_id': journal_id.id ,
-            'payment_date': time.strftime('%Y-%m-%d'),
-            'communication': 'XENDIT ' + sale_order.name ,
-            'payment_method_id' : payment_method.id
+            'partner_id': 'user_id',
+            'amount': 'amount',
+            'journal_id': 'external_id' ,
+            'payment_date': 'paid_at',
+            'communication': 'description' ,
+            'payment_method_id' : 'payment_method'
         })
-        p.post()
-        res = {'message': 'success'}
+        # p.post()
+        # res = {'message': 'success'}
         # res = {
         #     'id': sale_order.id_xendit,
         #     'external_id': sale_order.external,
@@ -56,28 +56,28 @@ class VitXenditCallback(http.Controller):
         return simplejson.dumps(res)
         print(res)
 
-    @http.route('/xendit/fva/paid', method='POST', auth='public')
-    def index(self, **kw):
-        _logger = info(kw)
-        va_number = kw.get('va_number')
-        res_partner = request.env['res.partner'].search([('va_number','=',va_number)])
-        if not res_partner:
-            rest = {'status':'FAILED', 'message':'SO not found'}
-            return simplejson.dumps(rest)
-        journal_id = request.env['account.journal'].search([('name','=','Bank')])
-        payment_method= request.env['account.payment.method'].search([('code','=','electronic')])
-        payment = request.env['account.payment']
-        p = payment.create({
-            'payment_type':'inbound',
-            'partner_type':'customer',
-            'partner_id': res_partner.id,
-            'amount': res_partner.amount,
-            'journal_id': journal_id.id ,
-            'payment_date': time.strftime('%Y-%m-%d'),
-            'communication': 'XENDIT ' + res_partner.partner_res_id ,
-            'payment_method_id' : payment_method.id
-        })
-        p.post()
+    # @http.route('/xendit/fva/paid', method='POST', auth='public')
+    # def index(self, **kw):
+    #     _logger = info(kw)
+    #     va_number = kw.get('va_number')
+    #     res_partner = request.env['res.partner'].search([('va_number','=',va_number)])
+    #     if not res_partner:
+    #         rest = {'status':'FAILED', 'message':'SO not found'}
+    #         return simplejson.dumps(rest)
+    #     journal_id = request.env['account.journal'].search([('name','=','Bank')])
+    #     payment_method= request.env['account.payment.method'].search([('code','=','electronic')])
+    #     payment = request.env['account.payment']
+    #     p = payment.create({
+    #         'payment_type':'inbound',
+    #         'partner_type':'customer',
+    #         'partner_id': res_partner.id,
+    #         'amount': res_partner.amount,
+    #         'journal_id': journal_id.id ,
+    #         'payment_date': time.strftime('%Y-%m-%d'),
+    #         'communication': 'XENDIT ' + res_partner.partner_res_id ,
+    #         'payment_method_id' : payment_method.id
+    #     })
+    #     p.post()
 
         # res = {
         #     "updated": res_partner.write_date,
@@ -93,9 +93,9 @@ class VitXenditCallback(http.Controller):
         #     "merchant_code": res_partner.merchant_code,
         #     "id": res_partner.partner_res_id
         #     }
-        res = {'message': 'success'}
-        return simplejson.dumps(res)
-        print(res)
+        # res = {'message': 'success'}
+        # return simplejson.dumps(res)
+        # print(res)
 
 #     @http.route('/vit_xendit_callback/vit_xendit_callback/objects/', auth='public')
 #     def list(self, **kw):
