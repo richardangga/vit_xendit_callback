@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 
 
 class VitXenditCallback(http.Controller):
-	@http.route('/xendit/invoice/paid', methods=['GET','POST'], auth='public', type='json')
+	@http.route('/xendit/invoice/paid', methods=['GET','POST'], auth='public',type='json')
 	def invoice_paid(self, **kw):
 		data = request.jsonrequest
 		_logger.info(data)
@@ -27,12 +27,12 @@ class VitXenditCallback(http.Controller):
 			'payment_type'		: 'inbound',
 			'partner_type'		: 'customer',
 			'partner_id'		: sale_order.partner_id.id,
-			'amount'		: sale_order.amount_total,
+			'amount'			: sale_order.amount_total,
 			'journal_id'		: journal_id.id,
 			'payment_date'		: time.strftime('%Y-%m-%d'),
 			'communication'		: 'XENDIT ' + sale_order.name,
-			'payment_method_id' 	: payment_method.id,
-			'name'			: 'XENDIT-' + sale_order.name,
+			'payment_method_id' : payment_method.id,
+			'name'				: 'XENDIT-' + sale_order.name,
 		}).sudo().post()
 
 		return "success"
